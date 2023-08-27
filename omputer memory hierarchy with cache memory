@@ -1,0 +1,55 @@
+class MainMemory {
+    private int[] memory;
+
+    public MainMemory(int size) {
+        memory = new int[size];
+    }
+
+    public int read(int address) {
+        return memory[address];
+    }
+
+    public void write(int address, int data) {
+        memory[address] = data;
+    }
+}
+
+class CacheMemory {
+    private int[] cache;
+    private MainMemory mainMemory;
+
+    public CacheMemory(int size, MainMemory mainMemory) {
+        cache = new int[size];
+        this.mainMemory = mainMemory;
+    }
+
+    public int read(int address) {
+        int data = cache[address];
+        if (data == 0) {
+            data = mainMemory.read(address);
+            cache[address] = data;
+            System.out.println("Data loaded into cache from main memory.");
+        } else {
+            System.out.println("Data read from cache.");
+        }
+        return data;
+    }
+}
+
+public class ComputerArchitectureSimulation {
+    public static void main(String[] args) {
+        MainMemory mainMemory = new MainMemory(1024);
+        CacheMemory cache = new CacheMemory(128, mainMemory);
+
+        // Write data to main memory
+        mainMemory.write(256, 42);
+
+        // Read data using cache
+        int dataFromCache = cache.read(256);
+        System.out.println("Data read: " + dataFromCache);
+
+        // Read data again (this time from cache)
+        int cachedData = cache.read(256);
+        System.out.println("Cached data: " + cachedData);
+    }
+}
